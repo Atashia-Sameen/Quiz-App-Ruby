@@ -7,3 +7,7 @@ class Question
     @answer = answer
   end
 end
+
+
+q = Question.new('What is 2 + 1', %w(2 3 1), 3)
+puts q

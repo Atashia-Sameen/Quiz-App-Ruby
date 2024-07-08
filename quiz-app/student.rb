@@ -5,16 +5,16 @@ class Student < User
     super
   end
   
-  def attempt_quiz
-    puts "\n-------Attempt Quiz-------\n\n"
+  def attempt
+    puts 'Attempt Quiz'
   end
   
   def view_quiz
-    puts "\n-------View Quiz-------\n\n"
+    puts 'View Quiz'
   end
 
   def view_attempts
-    puts "\n-------View Attempts-------\n\n"
+    puts 'View Attempts'
   end
   
 end
