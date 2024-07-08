@@ -1,25 +1,25 @@
 class Quiz
-  attr_accessor :questions, :is_published, :is_locked
-  
+  attr_accessor :questions, :published, :locked
+
   def initialize
     @questions = []
     @published = false
-    @is_locked = false
+    @locked = false
   end
 
   def add_question(question)
     @questions << question
   end
 
-  def publish
-    @is_published = true
+  def publish!
+    @published = true
   end
 
-  def locked
-    @is_locked = true
+  def lock!
+    @locked = true
   end
 
-  def quiz_available?
-    (!@is_locked && @is_published) ? true : false
+  def available?
+    !@locked && @published
   end
 end

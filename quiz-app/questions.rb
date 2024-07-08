@@ -1,9 +1,8 @@
 class Question
-  attr_accessor :question_type, :question_text, :options, :answer
-  
-  def initialize(question_type, question_text, options, answer)
-    @question_type = question_type
-    @question_text = question_text
+  attr_accessor :text, :options, :answer
+
+  def initialize(text, options, answer)
+    @text = text
     @options = options
     @answer = answer
   end

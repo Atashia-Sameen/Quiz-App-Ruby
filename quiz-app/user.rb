@@ -1,8 +1,8 @@
 class User
-  attr_reader :username, :password
-  
-  def initialize(username, password)
-    @username = username
+  attr_reader :name, :password
+
+  def initialize(name, password)
+    @name = name
     @password = password
   end
 end

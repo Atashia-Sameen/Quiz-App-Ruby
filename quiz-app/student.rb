@@ -2,7 +2,7 @@ require_relative 'user'
 
 class Student < User
   def initialize(username, password)
-    super(username, password)
+    super
   end
   
   def attempt_quiz
