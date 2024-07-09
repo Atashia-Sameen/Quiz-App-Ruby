@@ -28,7 +28,7 @@ class Teacher < User
   end
 
   def store_attempts(attempts)
-    @all_attempts << attempt
+    @all_attempts << attempts
   end
 
   def attempts
