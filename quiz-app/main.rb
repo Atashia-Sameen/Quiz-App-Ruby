@@ -15,13 +15,14 @@ current_user = nil
 def signup(users)
   puts "\nSignup as: \n"
   puts '1. Teacher', '2. Student', '3. Quit'
-  choice = GetInput.call("\nChoose:  ")
+  choice = GetInput.call("\nChoose:  ").to_i
 
   return if choice == 3
 
-  name = GetInput.call('Enter name: ')
-  password = GetInput.call('Enter password: ')
-
+  if choice <= 3
+    name = GetInput.call('Enter name: ')
+    password = GetInput.call('Enter password: ')
+  end
   if users.any? { |user| user.username == name }
     puts 'User already exists.'
   else
@@ -33,29 +34,29 @@ def signup(users)
     else
       puts 'Invalid Choice!'
     end
-    puts "\nAccount created..!!\n"
   end
+  puts "\nAccount created..!!\n"
 end
 
 # user login prompt
 def login(users)
   puts "\nLogin as:\n"
   puts '1. Teacher', '2. Student', '3. Quit'
-  choice = GetInput.call("\nChoose:  ")
+  choice = GetInput.call("\nChoose:  ").to_i
 
   return if choice == 3
-
-  name = GetInput.call('Enter name: ')
-  password = GetInput.call('Enter password: ')
-
-  user = users.find { |user| user.username == name && user.password == password }
+  if choice <= 3
+    name = GetInput.call('Enter name: ')
+    password = GetInput.call('Enter password: ')
+    user = users.find { |user| user.username == name && user.password == password }
+  end
   if user.nil?
     puts 'User does not exist or wrong password.'
   else
-    case user
-    when Teacher
+    case choice
+    when 1
       teacher_page(user)
-    when Student
+    when 2
       student_page(user, users)
     else
       puts 'Invalid Choice!'
@@ -71,7 +72,7 @@ def teacher_page(current_user)
     puts '2. Edit quiz'
     puts '3. View attempts'
     puts '4. Quit'
-    choice = GetInput.call("\nChoose:  ")
+    choice = GetInput.call("\nChoose:  ").to_i
 
     return if choice == 4
 
@@ -99,8 +100,7 @@ def student_page(current_user, users)
     puts '2. View attempts'
     puts '3. View quiz of given date'
     puts '4. Quit'
-    print "\nChoose: "
-    choice = gets.chomp.to_i
+    choice = GetInput.call("\nChoose:  ").to_i
 
     return if choice == 4
 
@@ -139,8 +139,7 @@ loop do
   puts '1. Signup'
   puts '2. Login'
   puts '3. Quit'
-  print "\nChoose: "
-  choice = gets.chomp.to_i
+  choice = GetInput.call("\nChoose:  ").to_i
 
   break if choice == 3
 
