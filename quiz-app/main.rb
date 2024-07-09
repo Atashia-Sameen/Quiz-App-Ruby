@@ -1,30 +1,29 @@
 require_relative 'user'
 require_relative 'teacher'
 require_relative 'student'
-
-def get_input(str)
-  print "#{str}"
-  gets.chomp
-end
+require_relative 'get_input'
+require 'pry'
 
 def display_line
   puts "\n-------------------\n"
 end
 
+users = []
+current_user = nil
+
 # user signup prompt
 def signup(users)
   puts "\nSignup as: \n"
   puts '1. Teacher', '2. Student', '3. Quit'
-  print "\nChoose: "
-  choice = gets.chomp.to_i
+  choice = GetInput.call("\nChoose:  ")
 
   return if choice == 3
 
-  name = get_input('Enter name: ')
-  password = get_input('Enter password: ')
+  name = GetInput.call('Enter name: ')
+  password = GetInput.call('Enter password: ')
 
-  if users.any? { |user| user.name == name }
-    puts 'User already exists'
+  if users.any? { |user| user.username == name }
+    puts 'User already exists.'
   else
     case choice
     when 1
@@ -39,27 +38,25 @@ def signup(users)
 end
 
 # user login prompt
-def login(users, current_user)
+def login(users)
   puts "\nLogin as:\n"
   puts '1. Teacher', '2. Student', '3. Quit'
-  print "\nChoose: "
-  choice = gets.chomp.to_i
+  choice = GetInput.call("\nChoose:  ")
 
   return if choice == 3
 
-  name = get_input('Enter name: ')
-  password = get_input('Enter password: ')
+  name = GetInput.call('Enter name: ')
+  password = GetInput.call('Enter password: ')
 
-  if users.any? { |user| user.name != name }
-    puts 'User does not exists.'
+  user = users.find { |user| user.username == name && user.password == password }
+  if user.nil?
+    puts 'User does not exist or wrong password.'
   else
-    case choice
-    when 1
-      current_user = Teacher.new(name, password)
-      teacher_page(current_user)
-    when 2
-      current_user = Student.new(name, password)
-      student_page(current_user)
+    case user
+    when Teacher
+      teacher_page(user)
+    when Student
+      student_page(user, users)
     else
       puts 'Invalid Choice!'
     end
@@ -74,23 +71,20 @@ def teacher_page(current_user)
     puts '2. Edit quiz'
     puts '3. View attempts'
     puts '4. Quit'
-    print "\nChoose: "
-    choice = gets.chomp.to_i
+    choice = GetInput.call("\nChoose:  ")
 
     return if choice == 4
 
     case choice
     when 1
-      puts 'Create a quiz.'
-      print 'Enter topic name: '
-      topic = gets.chomp.downcase
-      quiz = current_user.create_quiz(topic)
-      puts quiz
+      puts "\nCreate a quiz."
+      title = GetInput.call('Enter title name: ')
+      current_user.create_quiz(title)
     when 2
-      puts 'Edit quiz.'
-      current_user.edit_quiz()
+      puts "\nEdit quiz."
+      current_user.edit_quiz
     when 3
-      puts 'View attempts of quiz.'
+      puts "\nView attempts of quiz."
       current_user.attempts
     else
       puts 'Invalid Choice!'
@@ -99,7 +93,7 @@ def teacher_page(current_user)
 end
 
 # show student menu
-def student_page(_current_user)
+def student_page(current_user, users)
   loop do
     puts '1. Attempt quiz'
     puts '2. View attempts'
@@ -112,18 +106,33 @@ def student_page(_current_user)
 
     case choice
     when 1
-      puts 'Attempt Quiz.'
-      current_user.attempt
+      puts "\nAttempt Quiz."
+      quizzes = []
+
+      users.each do |user|
+        next unless user.is_a?(Teacher)
+        # binding.pry
+        user.quizzes.map do |quiz|
+          quizzes << quiz if quiz.available?
+        end
+      end
+
+      if quizzes
+        current_user.available_quizzes(quizzes)
+      else
+        puts 'Quiz not available'
+      end
     when 2
-      puts 'View Attempts.'
+      current_user.view_attempts
     when 3
-      puts 'View Quiz on given time.'
+      puts "\nView Quiz on given time."
+      given_date = GetInput.call('Enter date of quiz (DD/MM/YYYY): ')
+      current_user.view_quiz(given_date)
+    else
+      puts 'Invalid Choice!'
     end
   end
 end
-
-users = []
-current_user = nil
 
 loop do
   puts 'Signup/Login', display_line
@@ -139,7 +148,7 @@ loop do
   when 1
     signup(users)
   when 2
-    login(users, current_user)
+    login(users)
   else
     puts 'Invalid Choice!'
   end
