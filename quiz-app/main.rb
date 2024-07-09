@@ -45,6 +45,7 @@ def login(users)
   choice = GetInput.call("\nChoose:  ").to_i
 
   return if choice == 3
+
   if choice <= 3
     name = GetInput.call('Enter name: ')
     password = GetInput.call('Enter password: ')
@@ -55,7 +56,7 @@ def login(users)
   else
     case choice
     when 1
-      teacher_page(user)
+      teacher_page(user, users)
     when 2
       student_page(user, users)
     else
@@ -65,7 +66,7 @@ def login(users)
 end
 
 # show teacher menu
-def teacher_page(current_user)
+def teacher_page(current_user, users)
   puts 'Welcome', display_line
   loop do
     puts '1. Create quiz'
@@ -86,7 +87,16 @@ def teacher_page(current_user)
       current_user.edit_quiz
     when 3
       puts "\nView attempts of quiz."
-      current_user.attempts
+      attempts = []
+
+      users.each do |user|
+        next unless user.is_a?(Student)
+        user.quizzes.map do |quiz|
+          # binding.pry
+          attempts = user.all_attempts if quiz.created_by == current_user.username
+        end
+      end
+      current_user.view_attempts(attempts)
     else
       puts 'Invalid Choice!'
     end
@@ -111,6 +121,7 @@ def student_page(current_user, users)
 
       users.each do |user|
         next unless user.is_a?(Teacher)
+
         # binding.pry
         user.quizzes.map do |quiz|
           quizzes << quiz if quiz.available?
@@ -125,7 +136,7 @@ def student_page(current_user, users)
     when 2
       current_user.view_attempts
     when 3
-      puts "\nView Quiz on given time."
+      puts "\nView Quiz on given date."
       given_date = GetInput.call('Enter date of quiz (DD/MM/YYYY): ')
       current_user.view_quiz(given_date)
     else

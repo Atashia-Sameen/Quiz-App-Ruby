@@ -16,7 +16,7 @@ class Student < User
     display_quizzes
     index = quiz_index
 
-    if index
+    if index && attempt_quiz(@quizzes[index])
       attempt_quiz(@quizzes[index])
     else
       puts 'Invalid Choice!'
@@ -27,8 +27,10 @@ class Student < User
     attempt = Attempt.new(@username, quiz)
     display_questions(quiz, attempt)
     attempt.calculate_score
-    # record_attempt(quiz, attempt)
     @all_attempts << attempt
+
+    # store_attempt(quiz, attempt)
+
     puts "\nYour score: #{attempt.score}/#{quiz.questions.length}\n\n"
   end
 
@@ -40,12 +42,16 @@ class Student < User
   end
 
   def view_quiz(given_date)
-    @quizzes.each_with_index do |q, index|
-      if given_date.to_i <= q.deadline.to_i
-        puts "Avaialable quizzes: #{index + 1}. #{q.title}"
-      else
-        'Quiz has passed the deadlines.'
+    if @quizzes
+      @quizzes.each_with_index do |q, index|
+        if given_date.to_i <= q.deadline.to_i && @quizzes.available?
+          puts "Avaialable quizzes: #{index + 1}. #{q.title}"
+        else
+          'Quiz has passed the deadlines.'
+        end
       end
+    else
+      puts 'No quiz avaialable.'
     end
   end
 
@@ -76,5 +82,10 @@ class Student < User
     else
       puts "\nQuestions for this quiz are not available.\n"
     end
+  end
+
+  def store_attempt(quiz, attempt)
+    teacher = quiz.createrd_by
+    teacher.store_student_attempts(attempt)
   end
 end

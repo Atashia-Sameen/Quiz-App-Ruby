@@ -1,11 +1,11 @@
 require_relative 'question'
 require 'time'
 class Quiz
-  attr_accessor :title, :questions, :published, :locked, :createrd_by, :date_created, :deadline
+  attr_accessor :title, :questions, :published, :locked, :created_by, :date_created, :deadline
 
-  def initialize(title, createrd_by)
+  def initialize(title, created_by)
     @title = title
-    @createrd_by = createrd_by
+    @created_by = created_by
     @questions = []
     @published = true
     @locked = false
@@ -31,6 +31,7 @@ class Quiz
   end
 
   def available?
+    # @locked && @published && (Time.now.strftime("%d/%m/%Y") < @deadline)
     !@locked && @published
   end
 

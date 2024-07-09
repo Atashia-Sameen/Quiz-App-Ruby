@@ -27,14 +27,13 @@ class Teacher < User
     @quizzes[index].edit
   end
 
-  def store_attempts(attempts)
-    @all_attempts << attempts
-  end
-
-  def attempts
-    puts "\nAll quiz attempts by students: "
-    @all_attempts.each do |attempt|
-      puts "Student: #{attempt.student} attempted quiz: #{attempt.quiz.title}, Score: #{attempt.score}/#{attempt.quiz.questions.length}\n"
+  def view_attempts(attempts)
+    if attempts.any?
+      attempts.each_with_index do |attempt, index|
+        puts "#{index + 1}. Student: #{attempt.student}, Score: #{attempt.score}/#{attempt.quiz.questions.length} /n/n"
+      end
+    else
+      puts 'No attempts found./n/n'
     end
   end
 
